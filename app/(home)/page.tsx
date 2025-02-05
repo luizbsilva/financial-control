@@ -8,6 +8,7 @@ import TransactionsPieChart from "./_components/transactions-pie-chart";
 import { getDashboard } from "../_data/get-dashboard";
 import ExpensesPerCategory from "./_components/expenses-per-category";
 import LastTransactions from "./_components/last-transactions";
+import InvestimentPerCategory from "./_components/investiment-per-category";
 
 interface HomeProps {
   searchParams: {
@@ -22,8 +23,9 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   }
   const monthIsInvalid = !month || !isMatch(month, "MM");
   if (monthIsInvalid) {
-    console.log(new Date().getMonth());
-    redirect(`?month=${new Date().getMonth() + 1}`);
+    redirect(
+      `?month=${(new Date().getMonth() + 1).toString().padStart(2, "0")}`,
+    );
   }
   const dashboard = await getDashboard(month);
   return (
@@ -39,9 +41,14 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
             <SummaryCards month={month} {...dashboard} />
             <div className="grid h-full grid-cols-3 grid-rows-1 gap-6 overflow-hidden">
               <TransactionsPieChart {...dashboard} />
-              <ExpensesPerCategory
-                expensesPerCategory={dashboard.totalExpensePerCategory}
-              />
+              <div className="col-span-2 grid h-full grid-cols-2 gap-6">
+                <ExpensesPerCategory
+                  expensesPerCategory={dashboard.totalExpensePerCategory}
+                />
+                <InvestimentPerCategory
+                  investimentPerCategory={dashboard.totalInvestimentPerCategory}
+                />
+              </div>
             </div>
           </div>
           <LastTransactions lastTransactions={dashboard.lastTransactions} />
